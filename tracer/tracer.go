@@ -297,6 +297,19 @@ func (t *Tracer) GetProbeEntryEbpfProgram() *cebpf.Program {
 	return t.ebpfProgs[genericProgName]
 }
 
+// perfEntryProgName is the name of the perf_event-typed native tracer entry
+// program. It computes the OTel correlation id and writes it to the shared
+// generic_params map, just like genericProgName does for kprobes. It is the
+// type-correct tail-call target for BPF_PROG_TYPE_PERF_EVENT gadget programs.
+const perfEntryProgName = "native_tracer_entry"
+
+// GetPerfEntryEbpfProgram returns the perf_event-typed entry program used to
+// correlate a BPF_PROG_TYPE_PERF_EVENT gadget sample with an OTel trace. It is
+// the perf_event counterpart of GetProbeEntryEbpfProgram (which is kprobe-typed).
+func (t *Tracer) GetPerfEntryEbpfProgram() *cebpf.Program {
+	return t.ebpfProgs[perfEntryProgName]
+}
+
 func (t *Tracer) GetGenericParamsEbpfMap() *cebpf.Map {
 	return t.ebpfMaps["generic_params"]
 }
